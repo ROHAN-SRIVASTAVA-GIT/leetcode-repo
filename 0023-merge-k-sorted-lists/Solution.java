@@ -73,4 +73,53 @@ public class Solution {
         // ===== FINAL ANSWER RETURN KARNA =====
         return dummy.next;
     }
+
+    // ===== YEH HELPER METHOD HAI — array se linked list banata hai (testing ke liye) =====
+    private static ListNode buildList(int[] values) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (int value : values) {
+            current.next = new ListNode(value);
+            current = current.next;
+        }
+        return dummy.next;
+    }
+
+    // ===== YEH HELPER METHOD HAI — linked list ko print karne layak String banata hai =====
+    private static String listToString(ListNode head) {
+        StringBuilder sb = new StringBuilder("[");
+        while (head != null) {
+            sb.append(head.val);
+            if (head.next != null) {
+                sb.append(", ");
+            }
+            head = head.next;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        ListNode[] lists1 = {
+            buildList(new int[]{1, 4, 5}),
+            buildList(new int[]{1, 3, 4}),
+            buildList(new int[]{2, 6})
+        };
+        System.out.println("Test 1 Output: " + listToString(sol.mergeKLists(lists1)));
+        // Expected: [1, 1, 2, 3, 4, 4, 5, 6]
+
+        // Test case 2 — khaali array
+        ListNode[] lists2 = {};
+        System.out.println("Test 2 Output: " + listToString(sol.mergeKLists(lists2)));
+        // Expected: []
+
+        // Test case 3 — ek list, wo bhi khaali
+        ListNode[] lists3 = { null };
+        System.out.println("Test 3 Output: " + listToString(sol.mergeKLists(lists3)));
+        // Expected: []
+    }
 }
