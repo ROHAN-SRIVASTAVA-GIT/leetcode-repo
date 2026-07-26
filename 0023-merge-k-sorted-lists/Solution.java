@@ -35,7 +35,11 @@ public class Solution {
         // "upar" (nikalne ke liye ready) rakhta hai, chahe tum kisi bhi order mein daalo
         // "(a, b) -> a.val - b.val" batata hai ki COMPARISON kaise karna hai:
         //   jiska "val" chhota hai, use "chhota" maano (isse min-heap banta hai)
-        PriorityQueue<ListNode> minHeap = new PriorityQueue<>((a, b) -> a.val - b.val);
+        // NOTE: "<ListNode>" yaha EXPLICITLY likha hai (sirf "<>" nahi) — kuch
+        // compilers (jaise LeetCode ka judge) diamond operator "<>" ko lambda ke
+        // saath sahi se infer nahi kar paate, aur type "Object" ban jaata hai jisme
+        // ".val" access nahi hota. Explicit type likhne se yeh guaranteed fix ho jaata hai.
+        PriorityQueue<ListNode> minHeap = new PriorityQueue<ListNode>((a, b) -> a.val - b.val);
 
         // ===== SAARI LISTS KE "PEHLE" (SABSE CHHOTE) NODE KO HEAP MEIN DAALNA =====
         // ===== YEH LOOP HAI (for-each loop) =====
