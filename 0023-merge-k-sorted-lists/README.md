@@ -54,6 +54,58 @@ hisaab se chhota-bada compare karo**, isse yeh Min-Heap ban gaya (sabse chhoti
 hai sabse chhota kaun hai (`O(log k)` mein), jabki baar-baar merge karne mein har
 list ko baar-baar poora scan karna padta.
 
+## Dry Run — Heap ko haath se chala ke dekhte hain (real example)
+
+Chalo `lists = [[1,4,5], [1,3,4], [2,6]]` leke karte hain.
+
+**Step 1: Saari lists ke pehle node heap mein daalo**
+
+Heap mein daale: `1` (list0), `1` (list1), `2` (list2)
+Heap ke andar (sabse chhota "upar"): `{1, 1, 2}`
+
+**Step 2: Loop chalao — har baar sabse chhota nikaalo, uska next daalo**
+
+| Heap (poll se pehle) | `poll()` se nikla | Merged list mein jodo | Uska `next`? | Heap mein naya add | Heap (baad mein) |
+|---|---|---|---|---|---|
+| {1(L0), 1(L1), 2(L2)} | 1 (L0) | [1] | L0's next = 4 | offer(4) | {1(L1), 2(L2), 4(L0)} |
+| {1(L1), 2(L2), 4(L0)} | 1 (L1) | [1,1] | L1's next = 3 | offer(3) | {2(L2), 3(L1), 4(L0)} |
+| {2(L2), 3(L1), 4(L0)} | 2 (L2) | [1,1,2] | L2's next = 6 | offer(6) | {3(L1), 4(L0), 6(L2)} |
+| {3(L1), 4(L0), 6(L2)} | 3 (L1) | [1,1,2,3] | L1's next = 4 | offer(4) | {4(L0), 4(L1), 6(L2)} |
+| {4(L0), 4(L1), 6(L2)} | 4 (L0) | [1,1,2,3,4] | L0's next = 5 | offer(5) | {4(L1), 5(L0), 6(L2)} |
+| {4(L1), 5(L0), 6(L2)} | 4 (L1) | [1,1,2,3,4,4] | L1's next = null | kuch nahi add hua | {5(L0), 6(L2)} |
+| {5(L0), 6(L2)} | 5 (L0) | [1,1,2,3,4,4,5] | L0's next = null | kuch nahi | {6(L2)} |
+| {6(L2)} | 6 (L2) | [1,1,2,3,4,4,5,6] | L2's next = null | kuch nahi | {} khaali |
+
+Heap khaali ho gaya, loop ruk gaya. **Final answer: `[1,1,2,3,4,4,5,6]`** ✅
+
+### Real output flow (console pe simplified trace):
+
+```
+input: lists = [[1,4,5],[1,3,4],[2,6]]
+
+heap initial: {1(L0), 1(L1), 2(L2)}
+
+poll 1(L0) -> merged=[1]        -> offer L0.next=4  -> heap: {1(L1),2(L2),4(L0)}
+poll 1(L1) -> merged=[1,1]      -> offer L1.next=3  -> heap: {2(L2),3(L1),4(L0)}
+poll 2(L2) -> merged=[1,1,2]    -> offer L2.next=6  -> heap: {3(L1),4(L0),6(L2)}
+poll 3(L1) -> merged=[1,1,2,3]  -> offer L1.next=4  -> heap: {4(L0),4(L1),6(L2)}
+poll 4(L0) -> merged=[...,4]    -> offer L0.next=5  -> heap: {4(L1),5(L0),6(L2)}
+poll 4(L1) -> merged=[...,4,4]  -> L1.next=null, nothing offered -> heap: {5(L0),6(L2)}
+poll 5(L0) -> merged=[...,5]    -> L0.next=null, nothing offered -> heap: {6(L2)}
+poll 6(L2) -> merged=[...,6]    -> L2.next=null, nothing offered -> heap: {} EMPTY
+
+FINAL OUTPUT: [1,1,2,3,4,4,5,6]
+```
+
+### Notice karo yeh pattern:
+- Heap **hamesha khud figure out** kar leta hai sabse chhota kaun hai — humein khud
+  se saari `k` lists ke fronts compare nahi karne padte (jo `k` lists ke liye slow hota)
+- Jab bhi ek node **poll** hota hai, uski list ka **agla node turant heap mein wapas
+  chala jaata hai** — isse heap mein hamesha "abhi tak ki saari lists ke current
+  fronts" maujood rehte hain
+- Jab kisi node ka `next` `null` hota hai (list khatam ho gayi), heap mein kuch add
+  nahi hota — wo list "retire" ho jaati hai
+
 ## Line by Line Concept (Solution.java mein)
 
 | Cheez | Kya hai |
