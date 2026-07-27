@@ -60,4 +60,46 @@ public class Solution {
         // ===== FINAL ANSWER RETURN KARNA =====
         return dummy.next;
     }
+
+    // ===== YEH HELPER METHOD HAI — array se linked list banata hai (testing ke liye) =====
+    private static ListNode buildList(int[] values) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (int value : values) {
+            current.next = new ListNode(value);
+            current = current.next;
+        }
+        return dummy.next;
+    }
+
+    // ===== YEH HELPER METHOD HAI — linked list ko print karne layak String banata hai =====
+    private static String listToString(ListNode head) {
+        StringBuilder sb = new StringBuilder("[");
+        while (head != null) {
+            sb.append(head.val);
+            if (head.next != null) {
+                sb.append(", ");
+            }
+            head = head.next;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        ListNode list1 = buildList(new int[]{1, 2, 3, 4});
+        System.out.println("Test 1 Output: " + listToString(sol.swapPairs(list1))); // Expected: [2, 1, 4, 3]
+
+        // Test case 2 — khaali list
+        ListNode list2 = buildList(new int[]{});
+        System.out.println("Test 2 Output: " + listToString(sol.swapPairs(list2))); // Expected: []
+
+        // Test case 3 — odd length (aakhri node akela bacha, swap nahi hoga)
+        ListNode list3 = buildList(new int[]{1, 2, 3});
+        System.out.println("Test 3 Output: " + listToString(sol.swapPairs(list3))); // Expected: [2, 1, 3]
+    }
 }
