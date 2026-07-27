@@ -40,6 +40,81 @@ solution mein kiya hai).
 sakta hai** (pehli jodi mein head shamil hai), dummy node use karke humein "agar head
 change ho jaaye toh" jaisa special case nahi sochna padta.
 
+## Dry Run — Pointers ko haath se chala ke dekhte hain (real example)
+
+Chalo `head = [1,2,3,4]` leke karte hain.
+
+**Setup:** `dummy -> 1 -> 2 -> 3 -> 4 -> null`, `prev = dummy`
+
+### Iteration 1 (pair: 1, 2)
+
+Check: `prev.next(1) != null && prev.next.next(2) != null`? **HAA**
+
+| Step | Action | State (arrows) |
+|---|---|---|
+| Naming | `first = prev.next` = node(1), `second = first.next` = node(2) | `dummy->1->2->3->4` |
+| `first.next = second.next` | node(1) ka next ab node(3) | `dummy->1->3->4`, aur `2->?` abhi purana hi hai |
+| `second.next = first` | node(2) ka next ab node(1) | `2 -> 1 -> 3 -> 4` ban gaya |
+| `prev.next = second` | dummy ka next ab node(2) | `dummy -> 2 -> 1 -> 3 -> 4` |
+| `prev = first` | prev ab node(1) pe | (agla pair dhundhne ke liye ready) |
+
+**Ab list hai: `dummy -> 2 -> 1 -> 3 -> 4 -> null`**, `prev` node(1) pe khada hai.
+
+### Iteration 2 (pair: 3, 4)
+
+Check: `prev.next(3) != null && prev.next.next(4) != null`? **HAA**
+
+| Step | Action | State (arrows) |
+|---|---|---|
+| Naming | `first = prev.next` = node(3), `second = first.next` = node(4) | |
+| `first.next = second.next` | node(3) ka next ab null (4 ke aage kuch nahi tha) | |
+| `second.next = first` | node(4) ka next ab node(3) | `4 -> 3 -> null` ban gaya |
+| `prev.next = second` | node(1) ka next ab node(4) | `1 -> 4 -> 3 -> null` |
+| `prev = first` | prev ab node(3) pe | |
+
+**Ab list hai: `dummy -> 2 -> 1 -> 4 -> 3 -> null`**
+
+### Iteration 3 — loop check
+
+`prev.next` = null (node(3) ke aage kuch nahi) → condition `prev.next != null` **FALSE**
+→ loop RUK GAYA
+
+**Final answer (dummy.next se): `2 -> 1 -> 4 -> 3`** ✅
+
+### Real output flow (console pe kya print hota hai):
+
+```
+input: head = [1,2,3,4]
+dummy -> 1 -> 2 -> 3 -> 4 -> null,  prev = dummy
+
+iteration 1: pair(1,2)
+  first=1, second=2
+  first.next = second.next  -> 1.next = 3
+  second.next = first        -> 2.next = 1
+  prev.next = second         -> dummy.next = 2
+  prev = first                -> prev = 1
+  list now: dummy -> 2 -> 1 -> 3 -> 4
+
+iteration 2: pair(3,4)
+  first=3, second=4
+  first.next = second.next  -> 3.next = null
+  second.next = first        -> 4.next = 3
+  prev.next = second         -> 1.next = 4
+  prev = first                -> prev = 3
+  list now: dummy -> 2 -> 1 -> 4 -> 3
+
+check: prev.next = null -> loop stops
+
+FINAL OUTPUT: [2, 1, 4, 3]
+```
+
+### Notice karo yeh pattern:
+- Order **bahut important** hai: pehle `first.next` badalte hain, phir `second.next`,
+  phir `prev.next` — agar order galat kiya, toh koi node **"lost"** ho sakta hai
+  (uski taraf koi point hi nahi karega)
+- `prev` hamesha **swap ho chuke pair ke AAKHRI node** (jo ab `first` hai) pe move
+  hota hai, taaki agla pair dhundh sake
+
 ## Line by Line Concept (Solution.java mein)
 
 | Cheez | Kya hai |
@@ -57,3 +132,11 @@ change ho jaaye toh" jaisa special case nahi sochna padta.
 
 - **Time:** O(n) — list ko sirf ek baar traverse karte hain
 - **Space:** O(1) — koi naya node nahi banate, sirf existing nodes ko re-link karte hain
+
+## Test Cases
+
+| Input | Output | Kyun |
+|---|---|---|
+| `[1,2,3,4]` | `[2,1,4,3]` | Dono pairs (1,2) aur (3,4) swap hue |
+| `[]` | `[]` | Khaali list, kuch swap karne ko hai hi nahi |
+| `[1,2,3]` | `[2,1,3]` | Pehla pair (1,2) swap hua, akela bacha 3 waise hi raha |
