@@ -85,4 +85,46 @@ public class Solution {
         }
         return curr;
     }
+
+    // ===== YEH HELPER METHOD HAI — array se linked list banata hai (testing ke liye) =====
+    private static ListNode buildList(int[] values) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (int value : values) {
+            current.next = new ListNode(value);
+            current = current.next;
+        }
+        return dummy.next;
+    }
+
+    // ===== YEH HELPER METHOD HAI — linked list ko print karne layak String banata hai =====
+    private static String listToString(ListNode head) {
+        StringBuilder sb = new StringBuilder("[");
+        while (head != null) {
+            sb.append(head.val);
+            if (head.next != null) {
+                sb.append(", ");
+            }
+            head = head.next;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        ListNode list1 = buildList(new int[]{1, 2, 3, 4, 5});
+        System.out.println("Test 1 Output: " + listToString(sol.reverseKGroup(list1, 2))); // Expected: [2, 1, 4, 3, 5]
+
+        // Test case 2 — k=3
+        ListNode list2 = buildList(new int[]{1, 2, 3, 4, 5});
+        System.out.println("Test 2 Output: " + listToString(sol.reverseKGroup(list2, 3))); // Expected: [3, 2, 1, 4, 5]
+
+        // Test case 3 — k = poori list ki length
+        ListNode list3 = buildList(new int[]{1, 2, 3, 4, 5});
+        System.out.println("Test 3 Output: " + listToString(sol.reverseKGroup(list3, 5))); // Expected: [5, 4, 3, 2, 1]
+    }
 }
