@@ -52,6 +52,75 @@ jaata hai.
 **Dummy Node trick (Problem 19, 21, 23, 24 se yaad hai):** kyunki pehla group khud
 head ko badal sakta hai.
 
+## Dry Run — Pointers ko haath se chala ke dekhte hain (real example)
+
+Chalo `head = [1,2,3,4,5]`, `k = 3` leke karte hain.
+
+**Setup:** `dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null`, `groupPrev = dummy`
+
+### Group 1 (nodes 1, 2, 3)
+
+**Step 1 — Check:** `getKth(groupPrev=dummy, 3)` → dummy se 3 step aage = node(3).
+`kth = node(3)` (null nahi hai) → poora group hai, aage badho.
+
+`groupNext = kth.next` = node(4)
+
+**Step 2 — Reversal setup:** `prev = groupNext(4)`, `curr = groupPrev.next` = node(1)
+
+| Check `curr != groupNext`? | `curr` (pehle) | Action | `prev` (baad) | `curr` (baad) |
+|---|---|---|---|---|
+| 1 != 4? HAA | node(1) | temp=node(2); 1.next=prev(4); prev=1 | node(1) | node(2) |
+| 2 != 4? HAA | node(2) | temp=node(3); 2.next=prev(1); prev=2 | node(2) | node(3) |
+| 3 != 4? HAA | node(3) | temp=node(4); 3.next=prev(2); prev=3 | node(3) | node(4) |
+| 4 != 4? **NA** | — | loop RUKA | — | — |
+
+Ab group ke andar: `3 -> 2 -> 1 -> 4(groupNext, abhi tak connected nahi humare group se)`
+
+**Step 3 — Jodna:** `temp = groupPrev.next` = node(1) (OLD pehla node, ab AAKHRI hai)
+`groupPrev.next = kth(3)` → dummy ka next ab node(3)
+`groupPrev = temp(1)` → agle group ke liye ready
+
+**Ab poori list: `dummy -> 3 -> 2 -> 1 -> 4 -> 5`**, `groupPrev` node(1) pe hai.
+
+### Group 2 (nodes 4, 5)
+
+**Step 1 — Check:** `getKth(groupPrev=node1, 3)` → node(1) se 3 step aage: 1→4→5→**null**
+`kth = null` → **INCOMPLETE GROUP!** → `break` (loop ruk gaya, kuch reverse nahi hoga)
+
+**Final answer: `3 -> 2 -> 1 -> 4 -> 5`** ✅
+
+### Real output flow (console pe simplified trace):
+
+```
+input: head=[1,2,3,4,5], k=3
+dummy -> 1 -> 2 -> 3 -> 4 -> 5,  groupPrev = dummy
+
+--- Group 1 ---
+getKth(dummy, 3) = node(3)  -> not null, groupNext = node(4)
+reverse 1->2->3:
+  curr=1: temp=2, 1.next=4, prev=1, curr=2
+  curr=2: temp=3, 2.next=1, prev=2, curr=3
+  curr=3: temp=4, 3.next=2, prev=3, curr=4
+  curr==groupNext(4) -> stop reversal
+groupPrev.next = kth(3)   -> dummy -> 3 -> 2 -> 1 -> 4 -> 5
+groupPrev = temp(1)       -> groupPrev now at node(1)
+
+--- Group 2 ---
+getKth(node1, 3) -> 1->4->5->null -> null!
+INCOMPLETE GROUP -> break
+
+FINAL OUTPUT: [3, 2, 1, 4, 5]
+```
+
+### Notice karo yeh pattern:
+- **Reversal se pehle hamesha check** karte hain (`getKth`) — isse humein pata chal
+  jaata hai ki poora group hai ya nahi, **bina kisi node ka `next` badle**
+- Reversal ke andar `prev` ko `groupNext` se shuru karna ek **chhota par zaroori
+  trick** hai — isse group ka pehla node (jo reverse hoke aakhri banega) seedha
+  agle group se **already connected** ho jaata hai, extra step nahi lagta
+- Jab incomplete group milta hai, hum **turant `break`** kar dete hain — us group ko
+  bilkul haath nahi lagate, wo waisi hi reh jaati hai jaisi thi
+
 ## Line by Line Concept (Solution.java mein)
 
 | Cheez | Kya hai |
@@ -69,3 +138,11 @@ head ko badal sakta hai.
 - **Time:** O(n) — har node ko constant baar hi visit karte hain (getKth check +
   ek baar reversal ke andar)
 - **Space:** O(1) — koi naya node nahi banate, sirf existing nodes ko re-link karte hain
+
+## Test Cases
+
+| Input | Output | Kyun |
+|---|---|---|
+| `[1,2,3,4,5], k=2` | `[2,1,4,3,5]` | (1,2) aur (3,4) reverse hue, akela 5 waise hi raha |
+| `[1,2,3,4,5], k=3` | `[3,2,1,4,5]` | (1,2,3) reverse hua, (4,5) incomplete tha, waise hi raha |
+| `[1,2,3,4,5], k=5` | `[5,4,3,2,1]` | Poori list hi ek group hai, poori reverse hui |
