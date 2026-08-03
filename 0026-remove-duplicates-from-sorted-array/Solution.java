@@ -41,4 +41,41 @@ public class Solution {
         // toh unique elements ki GINTI = slow + 1 (kyunki index 0 se shuru hota hai)
         return slow + 1;
     }
+
+    // ===== YEH HELPER METHOD HAI — array ke sirf PEHLE "k" elements ko print karta hai =====
+    // (testing ke liye, taaki dekh sakein ki array ka "unique" hissa kaisa dikhta hai)
+    private static String arrayPrefixToString(int[] arr, int k) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < k; i++) {
+            sb.append(arr[i]);
+            if (i < k - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        int[] nums1 = {1, 1, 2};
+        int k1 = sol.removeDuplicates(nums1);
+        System.out.println("Test 1 Output: k=" + k1 + ", array=" + arrayPrefixToString(nums1, k1));
+        // Expected: k=2, array=[1, 2]
+
+        // Test case 2
+        int[] nums2 = {0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
+        int k2 = sol.removeDuplicates(nums2);
+        System.out.println("Test 2 Output: k=" + k2 + ", array=" + arrayPrefixToString(nums2, k2));
+        // Expected: k=5, array=[0, 1, 2, 3, 4]
+
+        // Test case 3 — koi duplicate hi nahi
+        int[] nums3 = {1, 2, 3};
+        int k3 = sol.removeDuplicates(nums3);
+        System.out.println("Test 3 Output: k=" + k3 + ", array=" + arrayPrefixToString(nums3, k3));
+        // Expected: k=3, array=[1, 2, 3]
+    }
 }
