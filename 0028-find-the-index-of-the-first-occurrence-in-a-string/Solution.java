@@ -35,4 +35,18 @@ public class Solution {
         // ===== YAHAN TAK POHONCHE, MATLAB KAHI BHI MATCH NAHI MILA =====
         return -1;
     }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        System.out.println("Test 1 Output: " + sol.strStr("sadbutsad", "sad")); // Expected: 0
+
+        // Test case 2 — needle milta hi nahi
+        System.out.println("Test 2 Output: " + sol.strStr("leetcode", "leeto")); // Expected: -1
+
+        // Test case 3 — needle beech mein milta hai
+        System.out.println("Test 3 Output: " + sol.strStr("hello", "ll")); // Expected: 2
+    }
 }
