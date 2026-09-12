@@ -45,6 +45,79 @@ deta hai, jo multiply-by-2 ke barabar hai).
 - **Overflow:** `Integer.MIN_VALUE / -1` ka answer `int` mein fit nahi hota — isko
   hum `long` use karke aur ek special check lagake handle karte hain
 
+## Dry Run — Loop ko haath se chala ke dekhte hain (real example)
+
+Chalo `dividend = 43`, `divisor = 3` leke karte hain (dono positive hain, toh
+`isNegative = false`). `dvd = 43`, `dvs = 3`, `result = 0`
+
+### Outer loop iteration 1: `dvd(43) >= dvs(3)`? HAA
+
+`temp = 3`, `multiple = 1`
+
+| Check: `dvd(43) >= temp<<1`? | `temp` (pehle) | Action | `temp` (baad) | `multiple` (baad) |
+|---|---|---|---|---|
+| 43 >= 6? HAA | 3 | double karo | 6 | 2 |
+| 43 >= 12? HAA | 6 | double karo | 12 | 4 |
+| 43 >= 24? HAA | 12 | double karo | 24 | 8 |
+| 43 >= 48? **NA** | 24 | inner loop RUKA | 24 | 8 |
+
+`dvd -= temp` → `dvd = 43 - 24 = 19`. `result += multiple` → `result = 0 + 8 = 8`
+
+### Outer loop iteration 2: `dvd(19) >= dvs(3)`? HAA
+
+`temp = 3`, `multiple = 1`
+
+| Check: `dvd(19) >= temp<<1`? | `temp` (pehle) | Action | `temp` (baad) | `multiple` (baad) |
+|---|---|---|---|---|
+| 19 >= 6? HAA | 3 | double karo | 6 | 2 |
+| 19 >= 12? HAA | 6 | double karo | 12 | 4 |
+| 19 >= 24? **NA** | 12 | inner loop RUKA | 12 | 4 |
+
+`dvd -= temp` → `dvd = 19 - 12 = 7`. `result += multiple` → `result = 8 + 4 = 12`
+
+### Outer loop iteration 3: `dvd(7) >= dvs(3)`? HAA
+
+`temp = 3`, `multiple = 1`
+
+| Check: `dvd(7) >= temp<<1`? | `temp` (pehle) | Action | `temp` (baad) | `multiple` (baad) |
+|---|---|---|---|---|
+| 7 >= 6? HAA | 3 | double karo | 6 | 2 |
+| 7 >= 12? **NA** | 6 | inner loop RUKA | 6 | 2 |
+
+`dvd -= temp` → `dvd = 7 - 6 = 1`. `result += multiple` → `result = 12 + 2 = 14`
+
+### Outer loop iteration 4: `dvd(1) >= dvs(3)`? **NA** → outer loop RUKA
+
+**Final answer: `result = 14`** ✅ (check: 3×14=42, 43-42=1, sahi hai — 43÷3 = 14 remainder 1)
+
+### Real output flow (console pe simplified trace):
+
+```
+input: dividend=43, divisor=3
+dvd=43, dvs=3, result=0
+
+iter1: temp=3->6->12->24 (24*2=48 > 43, stop), multiple=8
+       dvd = 43-24 = 19, result = 0+8 = 8
+
+iter2: temp=3->6->12 (12*2=24 > 19, stop), multiple=4
+       dvd = 19-12 = 7, result = 8+4 = 12
+
+iter3: temp=3->6 (6*2=12 > 7, stop), multiple=2
+       dvd = 7-6 = 1, result = 12+2 = 14
+
+iter4: dvd(1) >= dvs(3)? NO -> loop stops
+
+FINAL OUTPUT: 14
+```
+
+### Notice karo yeh pattern:
+- Har outer iteration mein hum **sabse bada possible chunk** (jo divisor ka power-of-2
+  multiple hai) ek hi baar mein ghata dete hain — isse humein 43 baar nahi, sirf
+  **3 baar** loop chalana pada
+- `multiple` hamesha `temp` ke saath **same rate se double** hota hai — dono ek
+  saath badhte hain, kyunki `multiple` batata hai "yeh `temp`, divisor ka kitna
+  guna hai"
+
 ## Line by Line Concept (Solution.java mein)
 
 | Cheez | Kya hai |
@@ -63,3 +136,11 @@ deta hai, jo multiply-by-2 ke barabar hai).
   hai, poore loop mein bahut kam iterations lagte hain (linear subtraction se
   bahut fast)
 - **Space:** O(1) — sirf kuch variables use ho rahe hain
+
+## Test Cases
+
+| Input | Output | Kyun |
+|---|---|---|
+| `dividend=10, divisor=3` | `3` | 10÷3 = 3 remainder 1 |
+| `dividend=7, divisor=-3` | `-2` | Signs alag hain, answer negative; 7÷3=2, toh -2 |
+| `dividend=Integer.MIN_VALUE, divisor=-1` | `2147483647` | Overflow case, int ki max value clamp hui |
