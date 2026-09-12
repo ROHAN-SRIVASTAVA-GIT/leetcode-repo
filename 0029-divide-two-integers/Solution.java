@@ -55,4 +55,18 @@ public class Solution {
         // agar answer negative hona chahiye, toh use negative kar do
         return isNegative ? (int) -result : (int) result;
     }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        System.out.println("Test 1 Output: " + sol.divide(10, 3)); // Expected: 3
+
+        // Test case 2 — negative sign wala case
+        System.out.println("Test 2 Output: " + sol.divide(7, -3)); // Expected: -2
+
+        // Test case 3 — overflow edge case
+        System.out.println("Test 3 Output: " + sol.divide(Integer.MIN_VALUE, -1)); // Expected: 2147483647
+    }
 }
