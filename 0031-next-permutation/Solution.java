@@ -55,4 +55,37 @@ public class Solution {
             right--;
         }
     }
+
+    // ===== YEH HELPER METHOD HAI — array ko print karne layak String banata hai =====
+    private static String arrayToString(int[] arr) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(arr[i]);
+            if (i < arr.length - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        int[] nums1 = {1, 2, 3};
+        sol.nextPermutation(nums1);
+        System.out.println("Test 1 Output: " + arrayToString(nums1)); // Expected: [1, 3, 2]
+
+        // Test case 2 — sabse bada arrangement, wrap around hoga
+        int[] nums2 = {3, 2, 1};
+        sol.nextPermutation(nums2);
+        System.out.println("Test 2 Output: " + arrayToString(nums2)); // Expected: [1, 2, 3]
+
+        // Test case 3 — tricky case
+        int[] nums3 = {1, 1, 5};
+        sol.nextPermutation(nums3);
+        System.out.println("Test 3 Output: " + arrayToString(nums3)); // Expected: [1, 5, 1]
+    }
 }
