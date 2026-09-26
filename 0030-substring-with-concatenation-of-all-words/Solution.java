@@ -104,4 +104,21 @@ public class Solution {
         // saari mili hui starting indices return kar do
         return result;
     }
+
+    // ===== YEH MAIN METHOD HAI — program yahi se shuru hota hai =====
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        // Test case 1
+        System.out.println("Test 1 Output: " + sol.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"}));
+        // Expected: [0, 9]
+
+        // Test case 2 — koi valid answer nahi
+        System.out.println("Test 2 Output: " + sol.findSubstring("wordgoodgoodgoodbestword", new String[]{"word", "good", "best", "word"}));
+        // Expected: []
+
+        // Test case 3 — repeated words wala tricky case
+        System.out.println("Test 3 Output: " + sol.findSubstring("barfoofoobarthefoobarman", new String[]{"bar", "foo", "the"}));
+        // Expected: [6, 9, 12]
+    }
 }
